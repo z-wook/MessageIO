@@ -7,5 +7,4 @@ target 'MessageIO' do
 
   # Pods for MessageIO
   pod 'SwiftLint'
-#  pod 'SnapKit'
 end
