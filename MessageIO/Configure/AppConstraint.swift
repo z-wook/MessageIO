@@ -21,12 +21,13 @@ extension AppConstraint {
 }
 
 extension AppConstraint {
-    static let chattingLabelMaxWidth = UIScreen.main.bounds.width * 0.7
+    static let chatLabelMaxWidth = UIScreen.main.bounds.width * 0.7
     static let messageBoxInset: CGFloat = 8
-    static let chattingLabelInset: CGFloat = 8
-    static let chattingHStackSpacing = 8
-    static let chattingVStackSpacing: CGFloat = 10
-    static let chattingLabelLeading: CGFloat = 14
+    static let chatLabelInset: CGFloat = 8
+    static let chatHStackSpacing = 8
+    static let chatVStackSpacing: CGFloat = 10
+    static let leftChatLabelLeading: CGFloat = 14
+    static let rightChatLabelTrailing: CGFloat = 14
     static let profileNameLabelSize: CGFloat = 20
     static let profileImageSize: CGFloat = 40
     static let timeLabelWidth: CGFloat = 50

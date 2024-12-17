@@ -1,5 +1,5 @@
 //
-//  LeftChattingCell.swift
+//  LeftChatCell.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -8,8 +8,8 @@
 import SnapKit
 import UIKit
 
-final class LeftChattingCell: UICollectionViewCell {
-    static let identifier = "LeftChattingCell"
+final class LeftChatCell: UICollectionViewCell {
+    static let identifier = "LeftChatCell"
     
     private let profileImageView: UIImageView = {
         let view = UIImageView()
@@ -36,10 +36,10 @@ final class LeftChattingCell: UICollectionViewCell {
         return label
     }()
     
-    private let chattingLabel: UILabel = {
+    private let chatLabel: UILabel = {
         let label = UILabel()
-        label.font = ThemeFont.chattingLabelFont
-        label.textColor = ThemeColors.chattingColor
+        label.font = ThemeFont.chatLabelFont
+        label.textColor = ThemeColors.chatColor
         label.textAlignment = .left
         label.numberOfLines = 0
         return label
@@ -63,16 +63,16 @@ final class LeftChattingCell: UICollectionViewCell {
         return view
     }()
     
-    private let chattingVStackView: UIStackView = {
+    private let chatVStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
         view.alignment = .leading
         view.distribution = .fill
-        view.spacing = AppConstraint.chattingVStackSpacing
+        view.spacing = AppConstraint.chatVStackSpacing
         return view
     }()
     
-    private let chattingHStackView: UIStackView = {
+    private let chatHStackView: UIStackView = {
         let view = UIStackView()
         view.axis = .horizontal
         view.alignment = .bottom
@@ -81,36 +81,42 @@ final class LeftChattingCell: UICollectionViewCell {
         return view
     }()
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 
-extension LeftChattingCell {
-    func setData(data: ChattingModel?) {
+extension LeftChatCell {
+    func setData(data: ChatModel?) {
         profileImageView.image = data?.profileImg ?? .defaultProfile
         profileNameLabel.text = data?.name
-        chattingLabel.text = data?.chatting
-        timeLabel.text = "13:42"
+        chatLabel.text = data?.chat
+        timeLabel.text = data?.time
     }
-    
+}
+
+private extension LeftChatCell {
     func setUI() {
         contentView.addSubview(messageBoxView)
         
-        [profileImageView, chattingVStackView].forEach {
+        [profileImageView, chatVStackView].forEach {
             messageBoxView.addArrangedSubview($0)
         }
         
-        [profileNameLabel, chattingHStackView].forEach {
-            chattingVStackView.addArrangedSubview($0)
+        [profileNameLabel, chatHStackView].forEach {
+            chatVStackView.addArrangedSubview($0)
         }
         
         [bubbleImageView, timeLabel].forEach {
-            chattingHStackView.addArrangedSubview($0)
+            chatHStackView.addArrangedSubview($0)
         }
         
-        bubbleImageView.addSubview(chattingLabel)
+        bubbleImageView.addSubview(chatLabel)
         
         messageBoxView.snp.makeConstraints {
             $0.edges.equalToSuperview().inset(AppConstraint.messageBoxInset)
@@ -127,10 +133,10 @@ extension LeftChattingCell {
             $0.height.equalTo(AppConstraint.profileNameLabelSize)
         }
         
-        chattingLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(AppConstraint.chattingLabelLeading)
-            $0.top.trailing.bottom.equalToSuperview().inset(AppConstraint.chattingLabelInset)
-            $0.width.lessThanOrEqualTo(AppConstraint.chattingLabelMaxWidth) // 최대 폭
+        chatLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(AppConstraint.leftChatLabelLeading)
+            $0.top.trailing.bottom.equalToSuperview().inset(AppConstraint.chatLabelInset)
+            $0.width.lessThanOrEqualTo(AppConstraint.chatLabelMaxWidth) // 최대 폭
         }
         
         timeLabel.snp.makeConstraints {

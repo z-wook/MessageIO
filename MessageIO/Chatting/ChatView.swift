@@ -1,5 +1,5 @@
 //
-//  ChattingView.swift
+//  ChatView.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -8,14 +8,15 @@
 import SnapKit
 import UIKit
 
-final class ChattingView: UIView {
+final class ChatView: UIView {
     var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumInteritemSpacing = 0
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = ThemeColors.chattingViewBgColor
-        collectionView.register(LeftChattingCell.self, forCellWithReuseIdentifier: LeftChattingCell.identifier)
+        collectionView.backgroundColor = ThemeColors.chatViewBgColor
+        collectionView.register(LeftChatCell.self, forCellWithReuseIdentifier: LeftChatCell.identifier)
+        collectionView.register(RightChatCell.self, forCellWithReuseIdentifier: RightChatCell.identifier)
         return collectionView
     }()
     
@@ -29,7 +30,7 @@ final class ChattingView: UIView {
     }
 }
 
-private extension ChattingView {
+private extension ChatView {
     func setLayout() {
         addSubview(collectionView)
         

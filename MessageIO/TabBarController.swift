@@ -24,7 +24,7 @@ private extension TabBarController {
             image: Icons.person,
             selectedImage: Icons.personFill)
         
-        let chatVC = UINavigationController(rootViewController: ChattingVC())
+        let chatVC = UINavigationController(rootViewController: ChatVC())
         chatVC.tabBarItem = UITabBarItem(
             title: "채팅",
             image: Icons.bubble,
