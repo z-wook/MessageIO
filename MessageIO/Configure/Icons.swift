@@ -8,7 +8,6 @@
 import UIKit
 
 struct Icons {
-    
     static let bubble: UIImage? = UIImage(systemName: "bubble")
     static let bubbleFill: UIImage? = UIImage(systemName: "bubble.fill")
     
@@ -17,4 +16,6 @@ struct Icons {
     
     static let gear: UIImage? = UIImage(systemName: "gearshape")
     static let gearFill: UIImage? = UIImage(systemName: "gearshape.fill")
+    
+    static let sendMessage: UIImage? = UIImage(systemName: "send")
 }

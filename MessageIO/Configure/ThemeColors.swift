@@ -13,5 +13,5 @@ struct ThemeColors {
     static let profileNameColor: UIColor = .systemGray2
     static let chatColor: UIColor = .black
     static let timeColor: UIColor = .systemGray2
-    static let chatViewBgColor: UIColor = .black.withAlphaComponent(0.9)
+    static let chatSubViewBgColor: UIColor = .black.withAlphaComponent(0.9)
 }

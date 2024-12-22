@@ -31,4 +31,7 @@ extension AppConstraint {
     static let profileNameLabelSize: CGFloat = 20
     static let profileImageSize: CGFloat = 40
     static let timeLabelWidth: CGFloat = 50
+    static let chatTextViewHeight: CGFloat = 40
+    static let sendButtonSize: CGFloat = 40
+    static let chatBottomHStackViewHeight: CGFloat = 80
 }
