@@ -1,5 +1,5 @@
 //
-//  ChatVM.swift
+//  ChatSubVM.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -7,42 +7,45 @@
 
 import Foundation
 
-final class ChatVM {
-    private(set) var chattings: [ChatModel]?
-    var testData: [ChatModel] = []
+final class ChatSubVM {
+    private(set) var chattings: [Chat]?
     
     init() {
-        print("ChattingVM init")
+        print("init ChatSubVM")
         makeTestData()
     }
     
     deinit {
-        print("ChattingVM deinit")
+        print("deinit ChatSubVM")
     }
 }
 
-extension ChatVM {
+extension ChatSubVM {
     func makeTestData() {
-        let tempData: [ChatModel] = [
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "Dummy\nData", time: "15:41"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "Swift", time: "15:42"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "hello", time: "15:43"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "hello world ~", time: "15:43"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "This Is Test Data", time: "15:44"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: "Test\nData", time: "15:45"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil, chat: """
+        let tempData: [Chat] = [
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "Dummy\nData", time: "15:41"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "Swift", time: "15:42"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "hello", time: "15:43"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "hello world ~", time: "15:43"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "This Is Test Data", time: "15:44"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: "Test\nData", time: "15:45"),
+            Chat(id: UUID(), name: "User", profileImg: nil, chat: """
 Long Text Long Text Long Text Long Text Long Text 
 Long Text Long Text Long Text Long Text Long Text 
 Long Text Long Text Long Text Long Text Long Text 
 Long Text Long Text Long Text Long Text Long Text
 """, time: "15:46"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil,
+            Chat(id: UUID(), name: "User", profileImg: nil,
                           chat: "hello\nhello\nhello\nhello\nhello\nhello\nhello", time: "15:47"),
-            ChatModel(id: UUID(), name: "User", profileImg: nil,
+            Chat(id: UUID(), name: "User", profileImg: nil,
                           chat: "Chatting UI Test\nChatting Data\n\nMade By z-wook", time: "15:48")
         ]
         
-        self.chattings = tempData // chattings에 저장
+        chattings = tempData // chattings에 저장
+    }
+    
+    func addChat(chat: Chat) {
+        chattings?.append(chat)
     }
     
     /// 채팅 길이에 따라 ChatCell의 높이를 계산하는 함수

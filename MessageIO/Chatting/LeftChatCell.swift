@@ -92,7 +92,7 @@ final class LeftChatCell: UICollectionViewCell {
 }
 
 extension LeftChatCell {
-    func setData(data: ChatModel?) {
+    func setData(data: Chat?) {
         profileImageView.image = data?.profileImg ?? .defaultProfile
         profileNameLabel.text = data?.name
         chatLabel.text = data?.chat
