@@ -8,7 +8,17 @@
 import Foundation
 
 final class ChatSubVM {
+    enum ChatCellType {
+        case left
+        case right
+    }
+    enum KeyboardState {
+        case show
+        case hide
+    }
     private(set) var chattings: [Chat]?
+    let uid = UUID()
+    var lastContentOffset: CGFloat?
     
     init() {
         print("init ChatSubVM")
@@ -48,7 +58,7 @@ Long Text Long Text Long Text Long Text Long Text
         chattings?.append(chat)
     }
     
-    /// 채팅 길이에 따라 ChatCell의 높이를 계산하는 함수
+    /// 채팅 길이에 따라 ChatCell의 높이를 계산하는 메서드
     /// - Parameters:
     ///   - chatCellType: 좌/우 CellType
     ///   - text: 채팅 text 데이터
@@ -75,13 +85,11 @@ Long Text Long Text Long Text Long Text Long Text
         
         switch chatCellType {
         case .left:
-            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.leftChatLabelLeading
-                                                          + AppConstraint.chatLabelInset),
+            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.leftChatLabelLeading + AppConstraint.chatLabelInset),
                                     height: .greatestFiniteMagnitude)
             
         case .right:
-            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.rightChatLabelTrailing
-                                                          + AppConstraint.chatLabelInset),
+            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.rightChatLabelTrailing + AppConstraint.chatLabelInset),
                                     height: .greatestFiniteMagnitude)
         }
         
@@ -107,5 +115,10 @@ Long Text Long Text Long Text Long Text Long Text
         }
         
         return CGSize(width: cellWidth, height: estimatedHeight)
+    }
+    
+    // 공백 체크를 하는 메서드
+    func isOnlyWhitespace(text: String) -> Bool {
+        return text.range(of: "^[\\s]*$", options: .regularExpression) != nil
     }
 }

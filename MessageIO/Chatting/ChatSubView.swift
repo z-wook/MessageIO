@@ -47,6 +47,11 @@ final class ChatSubView: UIView {
         return button
     }()
     
+//    private let spacerView: UIView = {
+//        let view = UIView()
+//        return view
+//    }()
+    
     init() {
         super.init(frame: .zero)
         self.backgroundColor = ThemeColors.chatSubViewBgColor
@@ -89,8 +94,27 @@ private extension ChatSubView {
     }
 }
 
-extension ChatSubVC {
-    func remakeLayout() {
+extension ChatSubView {
+    func remakeLayout(keyboardHeight: CGFloat, keyboardState: ChatSubVM.KeyboardState) {
+        switch keyboardState {
+        case .show:
+            bottomHStackView.snp.remakeConstraints {
+                $0.leading.trailing.equalToSuperview().inset(AppConstraint.spacing10)
+                $0.bottom.equalToSuperview().inset(keyboardHeight)
+                $0.height.equalTo(AppConstraint.chatTextViewHeight + AppConstraint.spacing8)
+            }
+            
+        case .hide:
+            bottomHStackView.snp.remakeConstraints {
+                $0.leading.trailing.equalToSuperview().inset(AppConstraint.spacing10)
+                $0.bottom.equalToSuperview()
+                $0.height.equalTo(AppConstraint.chatBottomHStackViewHeight)
+            }
+        }
         
+        collectionView.snp.remakeConstraints {
+            $0.leading.top.trailing.equalToSuperview()
+            $0.bottom.equalTo(bottomHStackView.snp.top)
+        }
     }
 }

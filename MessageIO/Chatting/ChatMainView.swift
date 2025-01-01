@@ -53,7 +53,6 @@ final class ChatMainVC: UIViewController {
 
 extension ChatMainVC {
     @objc func temp() {
-        
         let chatSubVC = ChatSubVC()
         chatSubVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatSubVC, animated: true)

@@ -34,75 +34,65 @@ final class ChatSubVC: UIViewController, KeyboardObserver {
         
         chatSubView.collectionView.delegate = self
         chatSubView.collectionView.dataSource = self
-        chatSubView.chatTextView.delegate = self
-        chatSubView.sendButton.addTarget(self,
-                                         action: #selector(sendButtonTapped),
-                                         for: .touchUpInside)
-        
+        chatSubView.sendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
+        setNavigationBar()
         setKeyboardObserver()
         hideKeyBoardWhenTappedScreen()
         chatSubVM.makeTestData()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundEffect = UIBlurEffect(style: .dark)
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        scrollToBottom()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard chatSubVM.lastContentOffset == nil else { return }
+        scrollToBottom(animation: false)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         removeKeyboardObserver()
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.resignFirstResponder()
-    }
 }
 
 extension ChatSubVC {
     @objc func sendButtonTapped() {
-        print(chatSubVM.testData)
         guard let chat = chatSubView.chatTextView.text else { return }
-        let newChat = Chat(id: UUID(), name: "User", profileImg: nil, chat: chat, time: "20:53")
-        chatSubVM.testData.append(newChat)
-        print("=====")
-        print(chatSubVM.testData)
-        
+        if chatSubVM.isOnlyWhitespace(text: chat) { return }
+        let newChat = Chat(id: chatSubVM.uid, name: "User", profileImg: nil, chat: chat, time: "20:53")
+        chatSubVM.addChat(chat: newChat)
+        chatSubView.chatTextView.text = ""
         chatSubView.collectionView.reloadData()
+        scrollToBottom(animation: true)
     }
 }
 
 extension ChatSubVC {
     func keyboardWillShow(notification: Notification) {
-        if self.view.window?.frame.origin.y == 0 {
-            if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let keyboardRectangle = keyboardFrame.cgRectValue
-                let keyboardHeight = keyboardRectangle.height
-                let bottomSapcing = AppConstraint.chatBottomHStackViewHeight - AppConstraint.chatTextViewHeight - AppConstraint.spacing8
-                
-                UIView.animate(withDuration: 1) {
-                    self.view.window?.frame.origin.y -= keyboardHeight - bottomSapcing
-                }
-            }
-        }
+        let key = UIResponder.keyboardFrameEndUserInfoKey
+        guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
+        let keyboardHeight = keyboardFrame.height
+        let height = keyboardHeight - AppConstraint.chatTextViewHeight + AppConstraint.spacing8
+        let currentOffset = chatSubView.collectionView.contentOffset.y
+        let newOffset = max(currentOffset + height, 0)
+        chatSubVM.lastContentOffset = newOffset
+        
+        chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .show)
+        chatSubView.layoutIfNeeded()
+        chatSubView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
     }
     
     func keyboardWillHide(notification: Notification) {
-        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            let keyboardHeight = keyboardRectangle.height
-            let bottomSapcing = AppConstraint.chatBottomHStackViewHeight - AppConstraint.chatTextViewHeight - AppConstraint.spacing8
-            
-            UIView.animate(withDuration: 1) {
-                self.view.window?.frame.origin.y += keyboardHeight - bottomSapcing
-            }
-        }
+        let key = UIResponder.keyboardFrameEndUserInfoKey
+        guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
+        let keyboardHeight = keyboardFrame.height
+        let currentOffset = self.chatSubView.collectionView.contentOffset.y
+        let height = keyboardHeight - AppConstraint.chatBottomHStackViewHeight + AppConstraint.chatTextViewHeight + AppConstraint.spacing8
+        let originOffset: CGFloat = -100    // collectionView의 Top Layout을 SuperView로 설정했기 때문에 origin을 -100으로 설정
+        let newOffset = max(currentOffset - height, originOffset)
+        chatSubVM.lastContentOffset = newOffset
+        
+        chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .hide)
+        chatSubView.layoutIfNeeded()
+        chatSubView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
     }
 }
 
@@ -114,14 +104,12 @@ private extension ChatSubVC {
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
     }
     
-    func scrollToBottom() {
-        let lastSectionIndex = chatSubView.collectionView.numberOfSections - 1
-        if lastSectionIndex >= 0 {
-            let lastItemIndex = chatSubView.collectionView.numberOfItems(inSection: lastSectionIndex) - 1
-            if lastItemIndex >= 0 {
-                let indexPath = IndexPath(item: lastItemIndex, section: lastSectionIndex)
-                chatSubView.collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
-            }
+    func scrollToBottom(animation: Bool) {
+        guard let chatting = chatSubVM.chattings, chatting.isEmpty == false else { return }
+        let lastItemIndex = IndexPath(item: chatting.count - 1, section: 0)
+        
+        DispatchQueue.main.async {
+            self.chatSubView.collectionView.scrollToItem(at: lastItemIndex, at: .bottom, animated: animation)
         }
     }
 }
@@ -131,10 +119,11 @@ extension ChatSubVC: UICollectionViewDelegateFlowLayout {
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let chattings = chatSubVM.chattings else { return .zero }
-        return chatSubVM.getEstimatedChatCellSize(chatCellType: .left,
-                                               text: chattings[indexPath.row].chat,
-                                               cellWidth: collectionView.bounds.width,
-                                               lblMaxWidth: AppConstraint.chatLabelMaxWidth)
+        let cellType: ChatSubVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
+        return chatSubVM.getEstimatedChatCellSize(chatCellType: cellType,
+                                                  text: chattings[indexPath.row].chat,
+                                                  cellWidth: collectionView.bounds.width,
+                                                  lblMaxWidth: AppConstraint.chatLabelMaxWidth)
     }
 }
 
@@ -145,21 +134,23 @@ extension ChatSubVC: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: LeftChatCell.identifier,
-            for: indexPath) as? LeftChatCell else { return UICollectionViewCell() }
         guard let chattings = chatSubVM.chattings else { return UICollectionViewCell() }
-        cell.setData(data: chattings[indexPath.row])
-        return cell
+        let cellType: ChatSubVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
+        
+        switch cellType {
+        case .left:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: LeftChatCell.identifier,
+                for: indexPath) as? LeftChatCell else { return UICollectionViewCell() }
+            cell.setData(data: chattings[indexPath.row])
+            return cell
+            
+        case .right:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: RightChatCell.identifier,
+                for: indexPath) as? RightChatCell else { return UICollectionViewCell() }
+            cell.setData(data: chattings[indexPath.row])
+            return cell
+        }
     }
-}
-
-extension ChatSubVC: UITextViewDelegate {
-//    func textViewDidChange(_ textView: UITextView) {
-//        <#code#>
-//    }
-    
-//    override func keyboardWillShow(notification: NSNotification) {
-//        <#code#>
-//    }
 }
