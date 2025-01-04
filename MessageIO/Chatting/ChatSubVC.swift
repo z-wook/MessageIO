@@ -43,8 +43,8 @@ final class ChatSubVC: UIViewController, KeyboardObserver {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        guard chatSubVM.lastContentOffset == nil else { return }
+        guard chatSubVM.isKeyboardVisible == nil else { return }
+        chatSubVM.isKeyboardVisible = false
         scrollToBottom(animation: false)
     }
     
@@ -67,13 +67,16 @@ extension ChatSubVC {
 
 extension ChatSubVC {
     func keyboardWillShow(notification: Notification) {
+        guard let isKeyboardVisible = chatSubVM.isKeyboardVisible,
+              isKeyboardVisible == false else { return }
+        chatSubVM.isKeyboardVisible = true
+        
         let key = UIResponder.keyboardFrameEndUserInfoKey
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
         let height = keyboardHeight - AppConstraint.chatTextViewHeight + AppConstraint.spacing8
         let currentOffset = chatSubView.collectionView.contentOffset.y
         let newOffset = max(currentOffset + height, 0)
-        chatSubVM.lastContentOffset = newOffset
         
         chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .show)
         chatSubView.layoutIfNeeded()
@@ -81,6 +84,10 @@ extension ChatSubVC {
     }
     
     func keyboardWillHide(notification: Notification) {
+        guard let isKeyboardVisible = chatSubVM.isKeyboardVisible,
+              isKeyboardVisible == true else { return }
+        chatSubVM.isKeyboardVisible = false
+        
         let key = UIResponder.keyboardFrameEndUserInfoKey
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
@@ -88,7 +95,6 @@ extension ChatSubVC {
         let height = keyboardHeight - AppConstraint.chatBottomHStackViewHeight + AppConstraint.chatTextViewHeight + AppConstraint.spacing8
         let originOffset: CGFloat = -100    // collectionView의 Top Layout을 SuperView로 설정했기 때문에 origin을 -100으로 설정
         let newOffset = max(currentOffset - height, originOffset)
-        chatSubVM.lastContentOffset = newOffset
         
         chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .hide)
         chatSubView.layoutIfNeeded()

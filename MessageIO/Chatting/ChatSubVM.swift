@@ -18,7 +18,7 @@ final class ChatSubVM {
     }
     private(set) var chattings: [Chat]?
     let uid = UUID()
-    var lastContentOffset: CGFloat?
+    var isKeyboardVisible: Bool?    // 키보드 상태
     
     init() {
         print("init ChatSubVM")
