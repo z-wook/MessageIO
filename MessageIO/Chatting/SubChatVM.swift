@@ -73,23 +73,23 @@ Long Text Long Text Long Text Long Text Long Text
         let attributes: [NSAttributedString.Key: Any] = [.font: ThemeFont.regular16Font]
         
         // messageBoxView의 top, bottom inset
-        let messageBoxViewInsets = AppConstraint.messageBoxInset * 2
+        let messageBoxViewInsets = AppConstraint.size8 * 2
         
         // chattingVStackView의 spacing
-        let chatVStackSpacing = AppConstraint.chatVStackSpacing
+        let chatVStackSpacing = AppConstraint.size10
         
         // chattingLabel의 top, bottom inset
-        let chatLabelInsets = AppConstraint.chatLabelInset * 2
+        let chatLabelInsets = AppConstraint.size8 * 2
         
         var estimatedHeight: CGFloat
         
         switch chatCellType {
         case .left:
-            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.leftChatLabelLeading + AppConstraint.chatLabelInset),
+            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.size14 + AppConstraint.size8),
                                     height: .greatestFiniteMagnitude)
             
         case .right:
-            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.rightChatLabelTrailing + AppConstraint.chatLabelInset),
+            constraintSize = CGSize(width: lblMaxWidth - (AppConstraint.size14 + AppConstraint.size8),
                                     height: .greatestFiniteMagnitude)
         }
         
@@ -102,7 +102,7 @@ Long Text Long Text Long Text Long Text Long Text
         
         switch chatCellType {
         case .left:
-            estimatedHeight = AppConstraint.profileNameLabelSize
+            estimatedHeight = AppConstraint.size20
             + ceil(boundingBox.height)
             + messageBoxViewInsets
             + chatVStackSpacing

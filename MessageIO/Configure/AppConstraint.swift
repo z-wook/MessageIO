@@ -8,30 +8,18 @@
 import UIKit
 
 struct AppConstraint {
-    static let spacing4: CGFloat = 4
-    static let spacing8: CGFloat = 8
-    static let spacing10: CGFloat = 10
-    static let spacing14: CGFloat = 14
-    static let spacing16: CGFloat = 16
-    static let spacing24: CGFloat = 24
-}
-
-extension AppConstraint {
-    static let cornerRadius: CGFloat = 16
-}
-
-extension AppConstraint {
+    static let size4: CGFloat = 4
+    static let size8: CGFloat = 8
+    static let size10: CGFloat = 10
+    static let size14: CGFloat = 14
+    static let size16: CGFloat = 16
+    static let size20: CGFloat = 20
+    static let size24: CGFloat = 24
+    static let size40: CGFloat = 40
+    static let size50: CGFloat = 50
+    static let size80: CGFloat = 80
+    
+    static let radius16: CGFloat = 16
+    
     static let chatLabelMaxWidth = UIScreen.main.bounds.width * 0.7
-    static let messageBoxInset: CGFloat = 8
-    static let chatLabelInset: CGFloat = 8
-    static let chatHStackSpacing = 8
-    static let chatVStackSpacing: CGFloat = 10
-    static let leftChatLabelLeading: CGFloat = 14
-    static let rightChatLabelTrailing: CGFloat = 14
-    static let profileNameLabelSize: CGFloat = 20
-    static let profileImageSize: CGFloat = 40
-    static let timeLabelWidth: CGFloat = 50
-    static let chatTextViewHeight: CGFloat = 40
-    static let sendButtonSize: CGFloat = 40
-    static let chatBottomHStackViewHeight: CGFloat = 80
 }

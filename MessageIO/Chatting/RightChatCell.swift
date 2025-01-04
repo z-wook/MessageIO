@@ -42,7 +42,7 @@ final class RightChatCell: UICollectionViewCell {
         view.axis = .horizontal
         view.alignment = .trailing
         view.distribution = .fill
-        view.spacing = AppConstraint.spacing10
+        view.spacing = AppConstraint.size10
         return view
     }()
     
@@ -74,11 +74,11 @@ private extension RightChatCell {
         bubbleImageView.addSubview(chatLabel)
         
         messageBoxView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(AppConstraint.messageBoxInset)
+            $0.edges.equalToSuperview().inset(AppConstraint.size8)
         }
         
         timeLabel.snp.makeConstraints {
-            $0.width.equalTo(AppConstraint.timeLabelWidth)
+            $0.width.equalTo(AppConstraint.size50)
         }
         
         bubbleImageView.snp.makeConstraints {
@@ -86,8 +86,8 @@ private extension RightChatCell {
         }
         
         chatLabel.snp.makeConstraints {
-            $0.top.leading.bottom.equalToSuperview().inset(AppConstraint.chatLabelInset)
-            $0.trailing.equalToSuperview().inset(AppConstraint.rightChatLabelTrailing)
+            $0.top.leading.bottom.equalToSuperview().inset(AppConstraint.size8)
+            $0.trailing.equalToSuperview().inset(AppConstraint.size14)
             $0.width.lessThanOrEqualTo(AppConstraint.chatLabelMaxWidth) // 최대 폭
         }
     }

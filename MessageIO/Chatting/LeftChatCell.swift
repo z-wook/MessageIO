@@ -59,7 +59,7 @@ final class LeftChatCell: UICollectionViewCell {
         view.axis = .horizontal
         view.alignment = .leading
         view.distribution = .fill
-        view.spacing = AppConstraint.spacing10
+        view.spacing = AppConstraint.size10
         return view
     }()
     
@@ -68,7 +68,7 @@ final class LeftChatCell: UICollectionViewCell {
         view.axis = .vertical
         view.alignment = .leading
         view.distribution = .fill
-        view.spacing = AppConstraint.chatVStackSpacing
+        view.spacing = AppConstraint.size10
         return view
     }()
     
@@ -77,7 +77,7 @@ final class LeftChatCell: UICollectionViewCell {
         view.axis = .horizontal
         view.alignment = .bottom
         view.distribution = .fill
-        view.spacing = AppConstraint.spacing8
+        view.spacing = AppConstraint.size8
         return view
     }()
     
@@ -119,28 +119,28 @@ private extension LeftChatCell {
         bubbleImageView.addSubview(chatLabel)
         
         messageBoxView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(AppConstraint.messageBoxInset)
+            $0.edges.equalToSuperview().inset(AppConstraint.size8)
         }
         
         profileImageView.snp.makeConstraints {
-            $0.width.height.equalTo(AppConstraint.profileImageSize)
+            $0.width.height.equalTo(AppConstraint.size40)
             $0.leading.equalToSuperview()
             $0.top.equalToSuperview()
         }
         
         profileNameLabel.snp.makeConstraints {
             $0.leading.top.trailing.equalToSuperview()
-            $0.height.equalTo(AppConstraint.profileNameLabelSize)
+            $0.height.equalTo(AppConstraint.size20)
         }
         
         chatLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(AppConstraint.leftChatLabelLeading)
-            $0.top.trailing.bottom.equalToSuperview().inset(AppConstraint.chatLabelInset)
+            $0.leading.equalToSuperview().inset(AppConstraint.size14)
+            $0.top.trailing.bottom.equalToSuperview().inset(AppConstraint.size8)
             $0.width.lessThanOrEqualTo(AppConstraint.chatLabelMaxWidth) // 최대 폭
         }
         
         timeLabel.snp.makeConstraints {
-            $0.width.equalTo(AppConstraint.timeLabelWidth)
+            $0.width.equalTo(AppConstraint.size50)
         }
     }
 }

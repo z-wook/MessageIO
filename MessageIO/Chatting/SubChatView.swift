@@ -25,7 +25,7 @@ final class SubChatView: UIView {
         view.axis = .horizontal
         view.alignment = .top
         view.distribution = .fill
-        view.spacing = AppConstraint.spacing10
+        view.spacing = AppConstraint.size10
         return view
     }()
     
@@ -35,7 +35,7 @@ final class SubChatView: UIView {
         view.textColor = .label
         view.keyboardType = .default
         view.backgroundColor = .systemGray
-        view.layer.cornerRadius = AppConstraint.cornerRadius
+        view.layer.cornerRadius = AppConstraint.radius16
         view.clipsToBounds = true
         return view
     }()
@@ -74,17 +74,17 @@ private extension SubChatView {
         }
         
         bottomHStackView.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(AppConstraint.spacing10)
+            $0.leading.trailing.equalToSuperview().inset(AppConstraint.size10)
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(AppConstraint.chatBottomHStackViewHeight)
+            $0.height.equalTo(AppConstraint.size80)
         }
         
         chatTextView.snp.makeConstraints {
-            $0.height.equalTo(AppConstraint.chatTextViewHeight)
+            $0.height.equalTo(AppConstraint.size40)
         }
         
         sendButton.snp.makeConstraints {
-            $0.width.height.equalTo(AppConstraint.sendButtonSize)
+            $0.width.height.equalTo(AppConstraint.size40)
         }
     }
 }
@@ -94,16 +94,16 @@ extension SubChatView {
         switch keyboardState {
         case .show:
             bottomHStackView.snp.remakeConstraints {
-                $0.leading.trailing.equalToSuperview().inset(AppConstraint.spacing10)
+                $0.leading.trailing.equalToSuperview().inset(AppConstraint.size10)
                 $0.bottom.equalToSuperview().inset(keyboardHeight)
-                $0.height.equalTo(AppConstraint.chatTextViewHeight + AppConstraint.spacing8)
+                $0.height.equalTo(AppConstraint.size40 + AppConstraint.size8)
             }
             
         case .hide:
             bottomHStackView.snp.remakeConstraints {
-                $0.leading.trailing.equalToSuperview().inset(AppConstraint.spacing10)
+                $0.leading.trailing.equalToSuperview().inset(AppConstraint.size10)
                 $0.bottom.equalToSuperview()
-                $0.height.equalTo(AppConstraint.chatBottomHStackViewHeight)
+                $0.height.equalTo(AppConstraint.size80)
             }
         }
         

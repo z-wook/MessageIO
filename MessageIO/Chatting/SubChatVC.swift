@@ -74,7 +74,7 @@ extension SubChatVC {
         let key = UIResponder.keyboardFrameEndUserInfoKey
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
-        let height = keyboardHeight - AppConstraint.chatTextViewHeight + AppConstraint.spacing8
+        let height = keyboardHeight - AppConstraint.size40 + AppConstraint.size8
         let currentOffset = chatSubView.collectionView.contentOffset.y
         let newOffset = max(currentOffset + height, 0)
         
@@ -92,7 +92,7 @@ extension SubChatVC {
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
         let currentOffset = self.chatSubView.collectionView.contentOffset.y
-        let height = keyboardHeight - AppConstraint.chatBottomHStackViewHeight + AppConstraint.chatTextViewHeight + AppConstraint.spacing8
+        let height = keyboardHeight - AppConstraint.chatBottomHStackViewHeight + AppConstraint.size40 + AppConstraint.size8
         let originOffset: CGFloat = -100    // collectionView의 Top Layout을 SuperView로 설정했기 때문에 origin을 -100으로 설정
         let newOffset = max(currentOffset - height, originOffset)
         
