@@ -1,5 +1,5 @@
 //
-//  ChatSubVC.swift
+//  SubChatVC.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class ChatSubVC: UIViewController, KeyboardObserver {
-    private let chatSubView = ChatSubView()
-    private let chatSubVM = ChatSubVM()
+final class SubChatVC: UIViewController, KeyboardObserver {
+    private let chatSubView = SubChatView()
+    private let chatSubVM = SubChatVM()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -53,7 +53,7 @@ final class ChatSubVC: UIViewController, KeyboardObserver {
     }
 }
 
-extension ChatSubVC {
+extension SubChatVC {
     @objc func sendButtonTapped() {
         guard let chat = chatSubView.chatTextView.text else { return }
         if chatSubVM.isOnlyWhitespace(text: chat) { return }
@@ -65,7 +65,7 @@ extension ChatSubVC {
     }
 }
 
-extension ChatSubVC {
+extension SubChatVC {
     func keyboardWillShow(notification: Notification) {
         guard let isKeyboardVisible = chatSubVM.isKeyboardVisible,
               isKeyboardVisible == false else { return }
@@ -102,7 +102,7 @@ extension ChatSubVC {
     }
 }
 
-private extension ChatSubVC {
+private extension SubChatVC {
     func setNavigationBar() {
         let appearance = UINavigationBarAppearance()
         appearance.backgroundEffect = UIBlurEffect(style: .dark)
@@ -120,12 +120,12 @@ private extension ChatSubVC {
     }
 }
 
-extension ChatSubVC: UICollectionViewDelegateFlowLayout {
+extension SubChatVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         guard let chattings = chatSubVM.chattings else { return .zero }
-        let cellType: ChatSubVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
+        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
         return chatSubVM.getEstimatedChatCellSize(chatCellType: cellType,
                                                   text: chattings[indexPath.row].chat,
                                                   cellWidth: collectionView.bounds.width,
@@ -133,7 +133,7 @@ extension ChatSubVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension ChatSubVC: UICollectionViewDelegate, UICollectionViewDataSource {
+extension SubChatVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return chatSubVM.chattings?.count ?? 0
     }
@@ -141,7 +141,7 @@ extension ChatSubVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let chattings = chatSubVM.chattings else { return UICollectionViewCell() }
-        let cellType: ChatSubVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
+        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
         
         switch cellType {
         case .left:

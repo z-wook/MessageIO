@@ -1,5 +1,5 @@
 //
-//  ChatSubView.swift
+//  SubChatView.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -8,7 +8,7 @@
 import SnapKit
 import UIKit
 
-final class ChatSubView: UIView {
+final class SubChatView: UIView {
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -31,7 +31,7 @@ final class ChatSubView: UIView {
     
     let chatTextView: UITextView = {
         let view = UITextView()
-        view.font = ThemeFont.chatTextViewFont
+        view.font = ThemeFont.regular16Font
         view.textColor = .label
         view.keyboardType = .default
         view.backgroundColor = .systemGray
@@ -47,14 +47,9 @@ final class ChatSubView: UIView {
         return button
     }()
     
-//    private let spacerView: UIView = {
-//        let view = UIView()
-//        return view
-//    }()
-    
     init() {
         super.init(frame: .zero)
-        self.backgroundColor = ThemeColors.chatSubViewBgColor
+        self.backgroundColor = ThemeColors.blackWithAlphaColor
         setLayout()
     }
     
@@ -63,7 +58,7 @@ final class ChatSubView: UIView {
     }
 }
 
-private extension ChatSubView {
+private extension SubChatView {
     func setLayout() {
         [collectionView, bottomHStackView].forEach {
             addSubview($0)
@@ -94,8 +89,8 @@ private extension ChatSubView {
     }
 }
 
-extension ChatSubView {
-    func remakeLayout(keyboardHeight: CGFloat, keyboardState: ChatSubVM.KeyboardState) {
+extension SubChatView {
+    func remakeLayout(keyboardHeight: CGFloat, keyboardState: SubChatVM.KeyboardState) {
         switch keyboardState {
         case .show:
             bottomHStackView.snp.remakeConstraints {

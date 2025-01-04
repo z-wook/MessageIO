@@ -29,8 +29,8 @@ final class LeftChatCell: UICollectionViewCell {
     
     private let profileNameLabel: UILabel = {
         let label = UILabel()
-        label.font = ThemeFont.profileNameFont
-        label.textColor = ThemeColors.profileNameColor
+        label.font = ThemeFont.light15Font
+        label.textColor = ThemeColors.systemGray2Color
         label.textAlignment = .left
         label.numberOfLines = 1
         return label
@@ -38,8 +38,8 @@ final class LeftChatCell: UICollectionViewCell {
     
     private let chatLabel: UILabel = {
         let label = UILabel()
-        label.font = ThemeFont.chatLabelFont
-        label.textColor = ThemeColors.chatColor
+        label.font = ThemeFont.regular16Font
+        label.textColor = ThemeColors.blackColor
         label.textAlignment = .left
         label.numberOfLines = 0
         return label
@@ -47,8 +47,8 @@ final class LeftChatCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let label = UILabel()
-        label.font = ThemeFont.timeLabelFont
-        label.textColor = ThemeColors.timeColor
+        label.font = ThemeFont.light13Font
+        label.textColor = ThemeColors.systemGray2Color
         label.textAlignment = .left
         label.numberOfLines = 0
         return label

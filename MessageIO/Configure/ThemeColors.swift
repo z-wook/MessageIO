@@ -7,11 +7,14 @@
 
 import UIKit
 
-struct ThemeColors {
-    static let bgColor: UIColor = .systemBackground
-    static let systemTintColor: UIColor = .systemPink
-    static let profileNameColor: UIColor = .systemGray2
-    static let chatColor: UIColor = .black
-    static let timeColor: UIColor = .systemGray2
-    static let chatSubViewBgColor: UIColor = .black.withAlphaComponent(0.9)
+struct ThemeColors { }
+
+extension ThemeColors {
+    static let systemBgColor: UIColor = .systemBackground
+    static let systemPinkColor: UIColor = .systemPink
+    static let systemGray2Color: UIColor = .systemGray2
+    
+    static let blackColor: UIColor = .black
+    static let labelColor: UIColor = .label
+    static let blackWithAlphaColor: UIColor = .black.withAlphaComponent(0.9)
 }

@@ -1,5 +1,5 @@
 //
-//  ChatMainVC.swift
+//  MainChatVC.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -8,7 +8,7 @@
 import SnapKit
 import UIKit
 
-final class ChatMainVC: UIViewController {
+final class MainChatVC: UIViewController {
     let tempButton: UIButton = {
         let button = UIButton()
         button.setTitle("Temp", for: .normal)
@@ -51,9 +51,9 @@ final class ChatMainVC: UIViewController {
     }
 }
 
-extension ChatMainVC {
+extension MainChatVC {
     @objc func temp() {
-        let chatSubVC = ChatSubVC()
+        let chatSubVC = SubChatVC()
         chatSubVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatSubVC, animated: true)
     }

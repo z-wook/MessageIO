@@ -24,14 +24,14 @@ private extension TabBarController {
             image: Icons.person,
             selectedImage: Icons.personFill)
         
-        let chatVC = UINavigationController(rootViewController: ChatMainVC())
+        let chatVC = UINavigationController(rootViewController: MainChatVC())
         chatVC.tabBarItem = UITabBarItem(
             title: "채팅",
             image: Icons.bubble,
             selectedImage: Icons.bubbleFill)
         
         viewControllers = [friendVC, chatVC]
-        tabBar.tintColor = ThemeColors.systemTintColor
+        tabBar.tintColor = ThemeColors.systemPinkColor
         
         let settingVC = UINavigationController(rootViewController: SettingVC())
         settingVC.tabBarItem = UITabBarItem(
@@ -40,6 +40,6 @@ private extension TabBarController {
             selectedImage: Icons.gearFill)
         
         viewControllers = [friendVC, chatVC, settingVC]
-        tabBar.tintColor = ThemeColors.systemTintColor
+        tabBar.tintColor = ThemeColors.systemPinkColor
     }
 }

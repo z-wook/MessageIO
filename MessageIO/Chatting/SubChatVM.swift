@@ -1,5 +1,5 @@
 //
-//  ChatSubVM.swift
+//  SubChatVM.swift
 //  MessageIO
 //
 //  Copyright (c) 2024 z-wook. All right reserved.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class ChatSubVM {
+final class SubChatVM {
     enum ChatCellType {
         case left
         case right
@@ -30,7 +30,7 @@ final class ChatSubVM {
     }
 }
 
-extension ChatSubVM {
+extension SubChatVM {
     func makeTestData() {
         let tempData: [Chat] = [
             Chat(id: UUID(), name: "User", profileImg: nil, chat: "Dummy\nData", time: "15:41"),
@@ -70,7 +70,7 @@ Long Text Long Text Long Text Long Text Long Text
                                   cellWidth: CGFloat,
                                   lblMaxWidth: CGFloat) -> CGSize {
         var constraintSize: CGSize
-        let attributes: [NSAttributedString.Key: Any] = [.font: ThemeFont.chatLabelFont]
+        let attributes: [NSAttributedString.Key: Any] = [.font: ThemeFont.regular16Font]
         
         // messageBoxView의 top, bottom inset
         let messageBoxViewInsets = AppConstraint.messageBoxInset * 2
