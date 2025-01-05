@@ -16,5 +16,7 @@ extension ThemeColors {
     
     static let blackColor: UIColor = .black
     static let labelColor: UIColor = .label
+    static let clearColor: UIColor = .clear
+    static let whiteColor: UIColor = .white
     static let blackWithAlphaColor: UIColor = .black.withAlphaComponent(0.9)
 }

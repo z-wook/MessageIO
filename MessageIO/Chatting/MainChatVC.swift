@@ -9,12 +9,8 @@ import SnapKit
 import UIKit
 
 final class MainChatVC: UIViewController {
-    let tempButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Temp", for: .normal)
-        button.setTitleColor(.red, for: .normal)
-        return button
-    }()
+    private let mainChatView = MainChatView()
+    private let mainChatVM = MainChatVM()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -30,29 +26,56 @@ final class MainChatVC: UIViewController {
         print("deinit ChatMainVC")
     }
     
+    override func loadView() {
+        super.loadView()
+        view = mainChatView
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-        let appearance = UINavigationBarAppearance()
-        appearance.backgroundEffect = UIBlurEffect(style: .regular)
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        setNavigationBar()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tempButton.addTarget(self, action: #selector(temp), for: .touchUpInside)
-        
-        view.addSubview(tempButton)
-        
-        tempButton.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.width.height.equalTo(100)
-        }
+        mainChatView.collectionView.delegate = self
+        mainChatView.collectionView.dataSource = self
     }
 }
 
-extension MainChatVC {
-    @objc func temp() {
+private extension MainChatVC {
+    func setNavigationBar() {
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundEffect = UIBlurEffect(style: .regular)
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+    }
+}
+
+extension MainChatVC: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: UIScreen.main.bounds.width, height: AppConstraint.size80)
+    }
+}
+
+extension MainChatVC: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return mainChatVM.chattings?.count ?? 0
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let chattings = mainChatVM.chattings else { return UICollectionViewCell() }
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: ChatListCell.identifier,
+            for: indexPath) as? ChatListCell else { return UICollectionViewCell() }
+        cell.setData(data: chattings[indexPath.row])
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let chatSubVC = SubChatVC()
         chatSubVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(chatSubVC, animated: true)

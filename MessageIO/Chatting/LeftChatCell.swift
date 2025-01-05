@@ -92,16 +92,14 @@ final class LeftChatCell: UICollectionViewCell {
 }
 
 extension LeftChatCell {
-    func setData(data: Chat?) {
-        profileImageView.image = data?.profileImg ?? .defaultProfile
-        profileNameLabel.text = data?.name
-        chatLabel.text = data?.chat
-        timeLabel.text = data?.time
+    func setData(data: Chat) {
+        profileImageView.image = data.profileImg ?? .defaultProfile
+        profileNameLabel.text = data.name
+        chatLabel.text = data.chat
+        timeLabel.text = data.time
     }
-}
-
-private extension LeftChatCell {
-    func setUI() {
+    
+    private func setUI() {
         contentView.addSubview(messageBoxView)
         
         [profileImageView, chatVStackView].forEach {

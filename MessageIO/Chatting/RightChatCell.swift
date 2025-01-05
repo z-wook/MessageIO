@@ -57,14 +57,12 @@ final class RightChatCell: UICollectionViewCell {
 }
 
 extension RightChatCell {
-    func setData(data: Chat?) {
-        chatLabel.text = data?.chat
-        timeLabel.text = data?.time
+    func setData(data: Chat) {
+        chatLabel.text = data.chat
+        timeLabel.text = data.time
     }
-}
-
-private extension RightChatCell {
-    func setUI() {
+    
+    private func setUI() {
         contentView.addSubview(messageBoxView)
         
         [UIView(), timeLabel, bubbleImageView].forEach {

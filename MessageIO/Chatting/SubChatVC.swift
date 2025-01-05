@@ -8,8 +8,8 @@
 import UIKit
 
 final class SubChatVC: UIViewController, KeyboardObserver {
-    private let chatSubView = SubChatView()
-    private let chatSubVM = SubChatVM()
+    private let subChatView = SubChatView()
+    private let subChatVM = SubChatVM()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -26,25 +26,25 @@ final class SubChatVC: UIViewController, KeyboardObserver {
     
     override func loadView() {
         super.loadView()
-        view = chatSubView
+        view = subChatView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        chatSubView.collectionView.delegate = self
-        chatSubView.collectionView.dataSource = self
-        chatSubView.sendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
+        subChatView.collectionView.delegate = self
+        subChatView.collectionView.dataSource = self
+        subChatView.sendButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
         setNavigationBar()
         setKeyboardObserver()
         hideKeyBoardWhenTappedScreen()
-        chatSubVM.makeTestData()
+        subChatVM.makeTestData()
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        guard chatSubVM.isKeyboardVisible == nil else { return }
-        chatSubVM.isKeyboardVisible = false
+        guard subChatVM.isKeyboardVisible == nil else { return }
+        subChatVM.isKeyboardVisible = false
         scrollToBottom(animation: false)
     }
     
@@ -55,50 +55,50 @@ final class SubChatVC: UIViewController, KeyboardObserver {
 
 extension SubChatVC {
     @objc func sendButtonTapped() {
-        guard let chat = chatSubView.chatTextView.text else { return }
-        if chatSubVM.isOnlyWhitespace(text: chat) { return }
-        let newChat = Chat(id: chatSubVM.uid, name: "User", profileImg: nil, chat: chat, time: "20:53")
-        chatSubVM.addChat(chat: newChat)
-        chatSubView.chatTextView.text = ""
-        chatSubView.collectionView.reloadData()
+        guard let chat = subChatView.chatTextView.text else { return }
+        if subChatVM.isOnlyWhitespace(text: chat) { return }
+        let newChat = Chat(id: subChatVM.uid, name: "User", profileImg: nil, chat: chat, time: "20:53")
+        subChatVM.addChat(chat: newChat)
+        subChatView.chatTextView.text = ""
+        subChatView.collectionView.reloadData()
         scrollToBottom(animation: true)
     }
 }
 
 extension SubChatVC {
     func keyboardWillShow(notification: Notification) {
-        guard let isKeyboardVisible = chatSubVM.isKeyboardVisible,
+        guard let isKeyboardVisible = subChatVM.isKeyboardVisible,
               isKeyboardVisible == false else { return }
-        chatSubVM.isKeyboardVisible = true
+        subChatVM.isKeyboardVisible = true
         
         let key = UIResponder.keyboardFrameEndUserInfoKey
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
         let height = keyboardHeight - AppConstraint.size40 + AppConstraint.size8
-        let currentOffset = chatSubView.collectionView.contentOffset.y
+        let currentOffset = subChatView.collectionView.contentOffset.y
         let newOffset = max(currentOffset + height, 0)
         
-        chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .show)
-        chatSubView.layoutIfNeeded()
-        chatSubView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
+        subChatView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .show)
+        subChatView.layoutIfNeeded()
+        subChatView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
     }
     
     func keyboardWillHide(notification: Notification) {
-        guard let isKeyboardVisible = chatSubVM.isKeyboardVisible,
+        guard let isKeyboardVisible = subChatVM.isKeyboardVisible,
               isKeyboardVisible == true else { return }
-        chatSubVM.isKeyboardVisible = false
+        subChatVM.isKeyboardVisible = false
         
         let key = UIResponder.keyboardFrameEndUserInfoKey
         guard let keyboardFrame = notification.userInfo?[key] as? CGRect else { return }
         let keyboardHeight = keyboardFrame.height
-        let currentOffset = self.chatSubView.collectionView.contentOffset.y
-        let height = keyboardHeight - AppConstraint.chatBottomHStackViewHeight + AppConstraint.size40 + AppConstraint.size8
+        let currentOffset = self.subChatView.collectionView.contentOffset.y
+        let height = keyboardHeight - AppConstraint.size80 + AppConstraint.size40 + AppConstraint.size8
         let originOffset: CGFloat = -100    // collectionView의 Top Layout을 SuperView로 설정했기 때문에 origin을 -100으로 설정
         let newOffset = max(currentOffset - height, originOffset)
         
-        chatSubView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .hide)
-        chatSubView.layoutIfNeeded()
-        chatSubView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
+        subChatView.remakeLayout(keyboardHeight: keyboardHeight, keyboardState: .hide)
+        subChatView.layoutIfNeeded()
+        subChatView.collectionView.setContentOffset(CGPoint(x: 0, y: newOffset), animated: false)
     }
 }
 
@@ -111,11 +111,11 @@ private extension SubChatVC {
     }
     
     func scrollToBottom(animation: Bool) {
-        guard let chatting = chatSubVM.chattings, chatting.isEmpty == false else { return }
+        guard let chatting = subChatVM.chattings, chatting.isEmpty == false else { return }
         let lastItemIndex = IndexPath(item: chatting.count - 1, section: 0)
         
         DispatchQueue.main.async {
-            self.chatSubView.collectionView.scrollToItem(at: lastItemIndex, at: .bottom, animated: animation)
+            self.subChatView.collectionView.scrollToItem(at: lastItemIndex, at: .bottom, animated: animation)
         }
     }
 }
@@ -124,9 +124,9 @@ extension SubChatVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
-        guard let chattings = chatSubVM.chattings else { return .zero }
-        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
-        return chatSubVM.getEstimatedChatCellSize(chatCellType: cellType,
+        guard let chattings = subChatVM.chattings else { return .zero }
+        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == subChatVM.uid ? .right : .left
+        return subChatVM.getEstimatedChatCellSize(chatCellType: cellType,
                                                   text: chattings[indexPath.row].chat,
                                                   cellWidth: collectionView.bounds.width,
                                                   lblMaxWidth: AppConstraint.chatLabelMaxWidth)
@@ -135,13 +135,13 @@ extension SubChatVC: UICollectionViewDelegateFlowLayout {
 
 extension SubChatVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return chatSubVM.chattings?.count ?? 0
+        return subChatVM.chattings?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let chattings = chatSubVM.chattings else { return UICollectionViewCell() }
-        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == chatSubVM.uid ? .right : .left
+        guard let chattings = subChatVM.chattings else { return UICollectionViewCell() }
+        let cellType: SubChatVM.ChatCellType = chattings[indexPath.row].id == subChatVM.uid ? .right : .left
         
         switch cellType {
         case .left:

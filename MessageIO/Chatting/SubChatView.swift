@@ -13,11 +13,11 @@ final class SubChatView: UIView {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 0
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .clear
-        collectionView.register(LeftChatCell.self, forCellWithReuseIdentifier: LeftChatCell.identifier)
-        collectionView.register(RightChatCell.self, forCellWithReuseIdentifier: RightChatCell.identifier)
-        return collectionView
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        view.backgroundColor = ThemeColors.clearColor
+        view.register(LeftChatCell.self, forCellWithReuseIdentifier: LeftChatCell.identifier)
+        view.register(RightChatCell.self, forCellWithReuseIdentifier: RightChatCell.identifier)
+        return view
     }()
     
     private let bottomHStackView: UIStackView = {
