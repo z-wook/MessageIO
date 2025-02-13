@@ -19,7 +19,7 @@ final class ChatListCell: UICollectionViewCell {
         return view
     }()
     
-    private let titleLabel: UILabel = {
+    private let chatRoomTitleLabel: UILabel = {
         let label = UILabel()
         label.font = ThemeFont.medium16Font
         label.textColor = ThemeColors.whiteColor
@@ -28,7 +28,7 @@ final class ChatListCell: UICollectionViewCell {
         return label
     }()
     
-    private let subTitleLabel: UILabel = {
+    private let lastChatLabel: UILabel = {
         let label = UILabel()
         label.font = ThemeFont.regular14Font
         label.textColor = ThemeColors.systemGray2Color
@@ -75,11 +75,14 @@ final class ChatListCell: UICollectionViewCell {
 }
 
 extension ChatListCell {
-    func setData(data: Chat) {
-        profileImageView.image = data.profileImg ?? .defaultProfile
-        titleLabel.text = data.name
-        subTitleLabel.text = data.chat
-        timeLabel.text = data.time
+    func setData(data: ChatRoomSummary) {
+        let participants = data.participantsID.joined(separator: ", ")
+        let timestamp = data.lastMessage?.timestamp
+        
+        profileImageView.image = .defaultProfile
+        chatRoomTitleLabel.text = participants      // TODO: - 추후 닉네임으로 변경하기(현재는 유저 아이디)
+        lastChatLabel.text = data.lastMessage?.content
+        timeLabel.text = timestamp?.dateFormattedString
     }
     
     private func setUI() {
@@ -89,7 +92,7 @@ extension ChatListCell {
             hStackView.addArrangedSubview($0)
         }
         
-        [titleLabel, subTitleLabel].forEach {
+        [chatRoomTitleLabel, lastChatLabel].forEach {
             vStackView.addArrangedSubview($0)
         }
         
