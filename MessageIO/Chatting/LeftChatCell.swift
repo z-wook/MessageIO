@@ -92,11 +92,11 @@ final class LeftChatCell: UICollectionViewCell {
 }
 
 extension LeftChatCell {
-    func setData(data: Chat) {
-        profileImageView.image = data.profileImg ?? .defaultProfile
-        profileNameLabel.text = data.name
-        chatLabel.text = data.chat
-        timeLabel.text = data.time
+    func setData(data: ChatMessage) {
+        profileImageView.image = .defaultProfile
+        profileNameLabel.text = data.id
+        chatLabel.text = data.content
+        timeLabel.text = data.timestamp.timeOnlyString
     }
     
     private func setUI() {

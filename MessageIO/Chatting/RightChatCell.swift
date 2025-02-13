@@ -57,9 +57,9 @@ final class RightChatCell: UICollectionViewCell {
 }
 
 extension RightChatCell {
-    func setData(data: Chat) {
-        chatLabel.text = data.chat
-        timeLabel.text = data.time
+    func setData(data: ChatMessage) {
+        chatLabel.text = data.content
+        timeLabel.text = data.timestamp.timeOnlyString
     }
     
     private func setUI() {
