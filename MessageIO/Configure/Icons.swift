@@ -18,4 +18,5 @@ struct Icons {
     static let gearFill: UIImage? = UIImage(systemName: "gearshape.fill")
     
     static let sendMessage: UIImage? = UIImage(systemName: "send")
+    static let plus: UIImage? = UIImage(systemName: "plus")
 }
