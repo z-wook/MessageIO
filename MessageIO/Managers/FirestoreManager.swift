@@ -18,6 +18,7 @@ enum FirebaseError: String, Error {
 final class FirestoreManager {
     static let shared = FirestoreManager()
     private let storeDB = Firestore.firestore()
+    private var listener: ListenerRegistration?
     private init() {}
     
     enum CollectionPath: String {
@@ -120,7 +121,7 @@ extension FirestoreManager {
             ])
             print("✅ 채팅방 삭제 성공: \(roomID)")
         } catch {
-            print("❌ 채팅방 삭제 실패: \(error.localizedDescription)")
+            print("❌ 채팅방 삭제 실패: \(error)")
             throw error
         }
     }
@@ -181,8 +182,8 @@ extension FirestoreManager {
                           requestCount: Int = 50) async throws -> (DocumentSnapshot?, [ChatMessage]) {
         var query = storeDB.collection(CollectionPath.roomID.path).document(roomID)
             .collection(CollectionPath.messages.path)
-            .order(by: "timeStamp", descending: true)   // 최신 메시지부터 가져오기
-            .limit(to: requestCount)                    // 요청 개수만큼 가져오기
+            .order(by: "timeStamp", descending: true)   // timeStamp기준 내림차순
+            .limit(to: requestCount)
         
         if let lastSnapshot = lastDocumentSnapshot {
             query = query.start(afterDocument: lastSnapshot) // 마지막 문서 이후 데이터 가져오기
@@ -194,23 +195,61 @@ extension FirestoreManager {
         let newLastDocumentSnapshot = documentSnapshots.last
         
         let chatMessages: [ChatMessage] = documentSnapshots.compactMap { snapshot in
-            do {
-                let encryptedMessageData = try snapshot.data(as: EncryptedMessageData.self)
-                guard let encryptedData = Data(base64Encoded: encryptedMessageData.data),
-                      let sealedBox = try? ChaChaPoly.SealedBox(combined: encryptedData) else {
-                    print("❌ Base64 디코딩 또는 SealedBox 생성 실패")
-                    return nil
-                }
-                
-                let chatMessage = try CryptoManager.shared.decryptChatMessage(sealBox: sealedBox, symmetricKey: symmetricKey)
-                return chatMessage
-                
-            } catch {
-                print("❌ 복호화 실패: \(error.localizedDescription)")
-                return nil
-            }
+            decryptMessage(snapshot: snapshot, symmetricKey: symmetricKey)
         }
         
         return (newLastDocumentSnapshot, chatMessages)
+    }
+    
+    /// 실시간으로 채팅 메시지를 감지하여 업데이트하는 메서드
+    /// - Parameters:
+    ///   - roomID: 채팅방 ID
+    ///   - symmetricKey: 공개키
+    ///   - onUpdate: 새로운 메시지가 감지될 때 호출되는 콜백
+    func observeNewMessages(roomID: String, symmetricKey: SymmetricKey, onUpdate: @escaping ([ChatMessage]) -> Void) {
+        removeListener()
+        
+        listener = storeDB.collection(CollectionPath.roomID.path).document(roomID)
+            .collection(CollectionPath.messages.path)
+            .order(by: "timeStamp", descending: true)
+            .limit(to: 1)
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("❌ 실시간 메시지 로드 오류: \(error)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                
+                let newMessages: [ChatMessage] = documents.compactMap { [weak self] document in
+                    self?.decryptMessage(snapshot: document, symmetricKey: symmetricKey)
+                }
+                
+                onUpdate(newMessages)
+            }
+    }
+    
+    /// 기존 리스너 제거(중복 방지)
+    func removeListener() {
+        listener?.remove()
+        listener = nil
+    }
+}
+
+private extension FirestoreManager {
+    func decryptMessage(snapshot: QueryDocumentSnapshot, symmetricKey: SymmetricKey) -> ChatMessage? {
+        do {
+            let encryptedMessageData = try snapshot.data(as: EncryptedMessageData.self)
+            guard let encryptedData = Data(base64Encoded: encryptedMessageData.data),
+                  let sealedBox = try? ChaChaPoly.SealedBox(combined: encryptedData) else {
+                print("❌ Base64 디코딩 또는 SealedBox 생성 실패")
+                return nil
+            }
+            
+            return try CryptoManager.shared.decryptChatMessage(sealBox: sealedBox, symmetricKey: symmetricKey)
+        } catch {
+            print("❌ 복호화 실패: \(error.localizedDescription)")
+            return nil
+        }
     }
 }
