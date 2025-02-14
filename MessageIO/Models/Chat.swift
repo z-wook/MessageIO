@@ -23,20 +23,19 @@ struct EncryptedMessageData: Codable {
 struct ChatRoomSummary {
     let id: String                      // 채팅방 ID
     let groupKey: SymmetricKey          // 채팅방 그룹키
-    var title: String? = nil            // 채팅방 이름
+    var title: String?                  // 채팅방 이름
     var participantsID: [String]        // 참가자 ID 목록
     var lastMessage: ChatMessage?       // 마지막 메시지 내용
-    
 //    let lastMessageTimestamp: Date      // 마지막 메시지 시간
 //    let unreadCount: Int                // 읽지 않은 메시지 개수
 }
 
 struct ChatRoom {
     let id: String                      // 채팅방 고유 ID
-    var groupKey: SymmetricKey? = nil          // 채팅방 그룹키
-    var title: String? = nil            // 채팅방 이름 (단체방 이름)
-//    var messages: [ChatMessage]         // 메시지 목록
-    var participantsID: [String] = []     // 참가자 ID 목록
+    var groupKey: SymmetricKey?         // 채팅방 그룹키
+    var title: String?                  // 채팅방 이름 (단체방 이름)
+    var participantsID: [String] = []   // 참가자 ID 목록
+    //    var messages: [ChatMessage]         // 메시지 목록
 }
 
 struct ChatMessage: Codable {
