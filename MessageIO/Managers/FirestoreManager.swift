@@ -201,17 +201,49 @@ extension FirestoreManager {
         return (newLastDocumentSnapshot, chatMessages)
     }
     
-    /// 실시간으로 채팅 메시지를 감지하여 업데이트하는 메서드
+    /// 메인 채팅에서 새로운 채팅 메시지를 감지하는 메서드
     /// - Parameters:
     ///   - roomID: 채팅방 ID
     ///   - symmetricKey: 공개키
     ///   - onUpdate: 새로운 메시지가 감지될 때 호출되는 콜백
-    func observeNewMessages(roomID: String, symmetricKey: SymmetricKey, onUpdate: @escaping ([ChatMessage]) -> Void) {
+    /// - Note: 메인 채팅방에 사용하는 메서드(리스너 관리는 VM에서 할 수 있도록 변형)
+    func observeLatestMessage(roomID: String, symmetricKey: SymmetricKey, onUpdate: @escaping (ListenerRegistration, [ChatMessage]) -> Void) {
+        var listener: ListenerRegistration?
+        
+        listener = storeDB.collection(CollectionPath.roomID.path).document(roomID)
+            .collection(CollectionPath.messages.path)
+            .order(by: "timeStamp", descending: true)  // timeStamp 기준 내림차순
+            .limit(to: 1)
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("❌ 실시간 메시지 로드 오류: \(error)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                
+                let newMessages: [ChatMessage] = documents.compactMap { [weak self] document in
+                    self?.decryptMessage(snapshot: document, symmetricKey: symmetricKey)
+                }
+                
+                if let listener = listener {
+                    onUpdate(listener, newMessages)
+                }
+            }
+    }
+    
+    /// 상세 채팅에서 새로운 채팅 메시지를 감지하는 메서드
+    /// - Parameters:
+    ///   - roomID: 채팅방 ID
+    ///   - symmetricKey: 공개키
+    ///   - onUpdate: 새로운 메시지가 감지될 때 호출되는 콜백
+    /// - Note: 상세 채팅방에 사용하는 메서드
+    func observeChatRoomMessages(roomID: String, symmetricKey: SymmetricKey, onUpdate: @escaping ([ChatMessage]) -> Void) {
         removeListener()
         
         listener = storeDB.collection(CollectionPath.roomID.path).document(roomID)
             .collection(CollectionPath.messages.path)
-            .order(by: "timeStamp", descending: true)
+            .order(by: "timeStamp", descending: true)   // timeStamp기준 내림차순
             .limit(to: 1)
             .addSnapshotListener { snapshot, error in
                 if let error = error {
@@ -248,7 +280,7 @@ private extension FirestoreManager {
             
             return try CryptoManager.shared.decryptChatMessage(sealBox: sealedBox, symmetricKey: symmetricKey)
         } catch {
-            print("❌ 복호화 실패: \(error.localizedDescription)")
+            print("❌ 복호화 실패: \(error)")
             return nil
         }
     }
