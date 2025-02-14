@@ -36,7 +36,7 @@ final class SubChatVM {
     
     let authManager = AuthManager.shared
     private let cryptoManager = CryptoManager.shared
-    private let fireStoreManager = FirestoreManager.shared
+    private let firestoreManager = FirestoreManager.shared
     private let keyChainManager = KeyChainManager.shared
     
     private(set) var chatRoom: ChatRoom
@@ -63,7 +63,7 @@ extension SubChatVM {
         
         do {
             observeChatMessages()
-            let (documentSnapshot, chatMessagges) = try await fireStoreManager
+            let (documentSnapshot, chatMessagges) = try await firestoreManager
                 .loadChatMessages(roomID: chatRoom.id,
                                   symmetricKey: groupKey,
                                   lastDocumentSnapshot: lastSnapshot,
@@ -80,7 +80,7 @@ extension SubChatVM {
         guard let lastSnapshot = lastSnapshot, let groupKey = chatRoom.groupKey else { return }
         
         do {
-            let (newLastSnapshot, messages) = try await fireStoreManager
+            let (newLastSnapshot, messages) = try await firestoreManager
                 .loadChatMessages(roomID: chatRoom.id,
                                   symmetricKey: groupKey,
                                   lastDocumentSnapshot: lastSnapshot,
@@ -182,7 +182,7 @@ extension SubChatVM {
 private extension SubChatVM {
     func sendChatData(roomID: String, chatMessage: ChatMessage, groupKey: SymmetricKey) throws {
         let sealBox = try cryptoManager.encryptChatMessage(chatMessage: chatMessage, symmetricKey: groupKey)
-        try fireStoreManager.saveChatMessageData(roomID: roomID, messageID: chatMessage.id, sealBox: sealBox)
+        try firestoreManager.saveChatMessageData(roomID: roomID, messageID: chatMessage.id, sealBox: sealBox)
     }
     
     func observeChatMessages() {
@@ -191,9 +191,8 @@ private extension SubChatVM {
             return
         }
         
-        fireStoreManager.observeNewMessages(roomID: chatRoom.id, symmetricKey: groupKey) { [weak self] newMessages in
+        firestoreManager.observeChatRoomMessages(roomID: chatRoom.id, symmetricKey: groupKey) { [weak self] newMessages in
             if self?.lastSnapshot == nil && self?.chatMessages.isEmpty == true {
-                print("📝 lastSnapshot: == nil && chatMessages is NOT empty")
                 return
             }
             
@@ -204,7 +203,7 @@ private extension SubChatVM {
     }
     
     func sendGroupKeyToServer(recipientID: String, groupKey: SymmetricKey, roomID: String) async throws {
-        guard let recipientPublicKeyData = try await fireStoreManager.loadPublicKeyData(userID: recipientID) else {
+        guard let recipientPublicKeyData = try await firestoreManager.loadPublicKeyData(userID: recipientID) else {
             throw ErrorType.noPublicKeyData
         }
         guard let senderPrivateKey = keyChainManager.loadPrivateKey(keyLabel: keyChainKeyLabel) else {
@@ -221,11 +220,11 @@ private extension SubChatVM {
             senderPrivateKey: senderPrivateKey
         )
         let encryptedGroupKey = EncryptedGroupKey(senderID: userData.uid, key: encryptedGroupKeyData)
-        try fireStoreManager.saveEncryptedGroupKey(roomID: roomID, recipientID: recipientID, encryptedGroupKey: encryptedGroupKey)
+        try firestoreManager.saveEncryptedGroupKey(roomID: roomID, recipientID: recipientID, encryptedGroupKey: encryptedGroupKey)
     }
     
     func inviteChatingRoom(invitationUserID: String, roomID: String) async throws {
-        try await fireStoreManager.saveParticipatingRoom(invitationUserID: invitationUserID, newRoomID: roomID)
+        try await firestoreManager.saveParticipatingRoom(invitationUserID: invitationUserID, newRoomID: roomID)
     }
     
     @MainActor
